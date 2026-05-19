@@ -13,6 +13,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique @db.VarChar(255)
@@ -23,6 +28,7 @@ model User {
   // nullable: better-auth sign-up only sends `name`, not split first/last
   firstName     String?  @db.VarChar(100)
   lastName      String?  @db.VarChar(100)
+  role          UserRole @default(USER)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
