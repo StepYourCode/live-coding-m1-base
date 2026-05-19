@@ -14,17 +14,21 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique @db.VarChar(255)
+  id            String    @id @default(uuid())
+  email         String    @unique @db.VarChar(255)
   // required by better-auth; populated from firstName + lastName on user creation
-  name          String   @default("") @db.VarChar(255)
-  emailVerified Boolean  @default(false)
+  name          String    @default("") @db.VarChar(255)
+  emailVerified Boolean   @default(false)
   image         String?
   // nullable: better-auth sign-up only sends `name`, not split first/last
-  firstName     String?  @db.VarChar(100)
-  lastName      String?  @db.VarChar(100)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  firstName     String?   @db.VarChar(100)
+  lastName      String?   @db.VarChar(100)
+  role          String    @default("user")
+  banned        Boolean   @default(false)
+  banReason     String?
+  banExpires    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   tickets  Ticket[]
   reviews  Review[]
@@ -42,15 +46,16 @@ model User {
 // ─── better-auth tables ────────────────────────────────────────────────────────
 
 model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String   @id
+  expiresAt      DateTime
+  token          String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  impersonatedBy String?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
   @@index([userId])
