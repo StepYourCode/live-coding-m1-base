@@ -4,6 +4,7 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewResponseDto } from './dto/review-response.dto';
 import { UUIDParam } from '../common/decorators/uuid-param.decorator';
 import { DeleteRoute } from '../common/decorators/delete-route.decorator';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 
 @Controller('roller-coasters/:rollerCoasterId/reviews')
 export class ReviewsController {
@@ -19,6 +20,7 @@ export class ReviewsController {
   }
 
   @Get()
+  @AllowAnonymous()
   async findAll(@UUIDParam('rollerCoasterId') rollerCoasterId: string) {
     const { averageRating, total, data } =
       await this.reviewsService.findAllByCoaster(rollerCoasterId);

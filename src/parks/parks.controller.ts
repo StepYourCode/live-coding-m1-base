@@ -7,6 +7,7 @@ import { ParkResponseDto } from './dto/park-response.dto';
 import { RollerCoasterResponseDto } from '../roller-coasters/dto/roller-coaster-response.dto';
 import { UUIDParam } from '../common/decorators/uuid-param.decorator';
 import { DeleteRoute } from '../common/decorators/delete-route.decorator';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 
 @Controller('parks')
 export class ParksController {
@@ -19,12 +20,14 @@ export class ParksController {
   }
 
   @Get()
+  @AllowAnonymous()
   async findAll() {
     const parks = await this.parksService.findAll();
     return parks.map((park) => ParkResponseDto.fromPrisma(park));
   }
 
   @Get(':id')
+  @AllowAnonymous()
   async findOne(@UUIDParam('id') id: string) {
     const park = await this.parksService.findOne(id);
     return ParkResponseDto.fromPrisma(park);
@@ -42,6 +45,7 @@ export class ParksController {
   }
 
   @Get(':id/roller-coasters')
+  @AllowAnonymous()
   async findRollerCoasters(
     @UUIDParam('id') id: string,
     @Query('isOperational', new ParseBoolPipe({ optional: true }))

@@ -5,6 +5,7 @@ import { UpdateRollerCoasterDto } from './dto/update-roller-coaster.dto';
 import { RollerCoasterResponseDto } from './dto/roller-coaster-response.dto';
 import { UUIDParam } from '../common/decorators/uuid-param.decorator';
 import { DeleteRoute } from '../common/decorators/delete-route.decorator';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 
 @Controller('roller-coasters')
 export class RollerCoastersController {
@@ -17,19 +18,24 @@ export class RollerCoastersController {
   }
 
   @Get()
+  @AllowAnonymous()
   async findAll() {
     const rcs = await this.rollerCoastersService.findAll();
     return rcs.map((rc) => RollerCoasterResponseDto.fromPrisma(rc));
   }
 
   @Get(':id')
+  @AllowAnonymous()
   async findOne(@UUIDParam('id') id: string) {
     const rc = await this.rollerCoastersService.findOne(id);
     return RollerCoasterResponseDto.fromPrisma(rc);
   }
 
   @Patch(':id')
-  async update(@UUIDParam('id') id: string, @Body() dto: UpdateRollerCoasterDto) {
+  async update(
+    @UUIDParam('id') id: string,
+    @Body() dto: UpdateRollerCoasterDto,
+  ) {
     const rc = await this.rollerCoastersService.update(id, dto);
     return RollerCoasterResponseDto.fromPrisma(rc);
   }
