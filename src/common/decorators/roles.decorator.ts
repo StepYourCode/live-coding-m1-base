@@ -18,13 +18,6 @@ import { SetMetadata } from '@nestjs/common';
  *   @Delete(':id')
  *   remove(...) { ... }
  *
- * In RolesGuard (not implemented here, left as exercise):
- *   const required = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
- *     context.getHandler(),
- *     context.getClass(),
- *   ]);
- *   if (!required) return true; // no roles required — public route
- *   return required.some(role => user.roles.includes(role));
  */
 export const ROLES_KEY = 'roles';
 export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
