@@ -7,6 +7,7 @@ import { UUIDParam } from '../common/decorators/uuid-param.decorator';
 import { DeleteRoute } from '../common/decorators/delete-route.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../common/decorators/current-user.decorator';
+import { RequirePermission } from '../common/decorators/roles.decorator';
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 
 @Controller('roller-coasters/:rollerCoasterId/reviews')
@@ -14,6 +15,7 @@ export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Post()
+  @RequirePermission('review', 'create')
   async create(
     @UUIDParam('rollerCoasterId') rollerCoasterId: string,
     @Body() dto: CreateReviewDto,
@@ -36,6 +38,7 @@ export class ReviewsController {
   }
 
   @Patch(':id')
+  @RequirePermission('review', 'update')
   async update(
     @UUIDParam('id') id: string,
     @Body() dto: UpdateReviewDto,
@@ -46,6 +49,7 @@ export class ReviewsController {
   }
 
   @DeleteRoute()
+  @RequirePermission('review', 'delete')
   delete(@UUIDParam('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     return this.reviewsService.delete(id, user);
   }
