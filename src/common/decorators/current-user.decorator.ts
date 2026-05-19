@@ -1,5 +1,8 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Request } from 'express';
+import { createParamDecorator, type ExecutionContext } from '@nestjs/common';
+import {
+  type AuthenticatedRequest,
+  type AuthenticatedUser,
+} from '../guards/auth.guard';
 
 /**
  * TYPE 1b — createParamDecorator
@@ -10,25 +13,18 @@ import { Request } from 'express';
  *   - data    = the argument passed to the decorator
  *   - context = gives access to req, res, and the handler metadata
  *
- * In a real app with JWT auth, a Guard decodes the token and attaches the
- * user object to req.user. This decorator then reads req.user cleanly,
- * without touching JWT logic in every controller.
+ * AuthGuard populates req.user with the full better-auth session user.
+ * This decorator reads it cleanly without touching auth logic in controllers.
  *
- * Usage (once a JWT guard populates req.user):
+ * Usage:
  *   @Get('me')
- *   getProfile(@CurrentUser() user: UserPayload) { ... }
- *
- *   @Get('me/email')
- *   getEmail(@CurrentUser('email') email: string) { ... }
- *
- * The `data` argument allows picking a specific field from the user object,
- * mirroring how @Param('id') picks a field from req.params.
+ *   getProfile(@CurrentUser() user: AuthenticatedUser) { ... }
  */
 export const CurrentUser = createParamDecorator(
-  (field: string | undefined, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest<Request>();
-    const user = (request as Request & { user?: Record<string, unknown> }).user;
-
-    return field ? user?.[field] : user;
+  (_: undefined, ctx: ExecutionContext): AuthenticatedUser | undefined => {
+    const request = ctx.switchToHttp().getRequest<AuthenticatedRequest>();
+    return request.user;
   },
 );
+
+export type { AuthenticatedUser } from '../guards/auth.guard';
