@@ -31,6 +31,14 @@ export class ReviewsRepository {
     return this.prisma.review.findUnique({ where: { id } });
   }
 
+  update(id: string, data: Prisma.ReviewUpdateInput) {
+    return this.prisma.review.update({
+      where: { id },
+      data,
+      include: { user: true },
+    });
+  }
+
   delete(id: string) {
     return this.prisma.review.delete({ where: { id } });
   }
