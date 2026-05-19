@@ -8,8 +8,14 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { fromNodeHeaders } from 'better-auth/node';
 import { auth } from '../../lib/auth';
+import { Roles } from '../../lib/access';
 
-export type AuthenticatedUser = typeof auth.$Infer.Session.user;
+export type AuthenticatedUser = Omit<
+  typeof auth.$Infer.Session.user,
+  'role'
+> & {
+  role?: Roles;
+};
 export type AuthenticatedRequest = Request & { user: AuthenticatedUser };
 
 @Injectable()
@@ -34,7 +40,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    request.user = session.user;
+    request.user = session.user as AuthenticatedUser;
     return true;
   }
 }
