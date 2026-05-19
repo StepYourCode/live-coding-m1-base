@@ -8,8 +8,13 @@ import { CursorPaginationParams } from '../common/pipes/cursor-pagination.pipe';
 export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll(pagination: OffsetPaginationParams): Promise<User[]> {
+  findAll(
+    pagination: OffsetPaginationParams,
+    role?: string,
+  ): Promise<User[]> {
     return this.prisma.user.findMany({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      where: role ? ({ role } as any) : undefined,
       skip: pagination.skip,
       take: pagination.limit,
       orderBy: { createdAt: 'desc' },
@@ -27,8 +32,11 @@ export class UserRepository {
     });
   }
 
-  count(): Promise<number> {
-    return this.prisma.user.count();
+  count(role?: string): Promise<number> {
+    return this.prisma.user.count({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      where: role ? ({ role } as any) : undefined,
+    });
   }
 
   findById(id: string): Promise<User | null> {

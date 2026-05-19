@@ -29,11 +29,11 @@ export class UsersService {
     });
   }
 
-  async findAll(pagination: OffsetPaginationParams) {
+  async findAll(pagination: OffsetPaginationParams, role?: string) {
     // Run both queries in parallel — count() has no dependency on the data query
     const [data, total] = await Promise.all([
-      this.user.findAll(pagination),
-      this.user.count(),
+      this.user.findAll(pagination, role),
+      this.user.count(role),
     ]);
 
     return {

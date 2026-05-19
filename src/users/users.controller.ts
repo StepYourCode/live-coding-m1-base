@@ -20,6 +20,8 @@ import { CursorPaginationPipe } from '../common/pipes/cursor-pagination.pipe';
 import type { CursorPaginationParams } from '../common/pipes/cursor-pagination.pipe';
 import { UUIDParam } from '../common/decorators/uuid-param.decorator';
 import { DeleteRoute } from '../common/decorators/delete-route.decorator';
+import { RequirePermission } from '../common/decorators/roles.decorator';
+import { RoleFilterPipe } from '../common/pipes/role-filter.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -32,11 +34,13 @@ export class UsersController {
   }
 
   @Get()
+  @RequirePermission('user', 'list')
   async findAll(
     @Query(OffsetPaginationPipe) pagination: OffsetPaginationParams,
+    @Query('role', RoleFilterPipe) role: string | undefined,
   ) {
     const { data, total, page, limit, totalPages } =
-      await this.usersService.findAll(pagination);
+      await this.usersService.findAll(pagination, role);
     return {
       data: data.map((user) => UserResponseDto.fromPrisma(user)),
       total,

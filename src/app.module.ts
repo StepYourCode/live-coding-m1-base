@@ -8,6 +8,8 @@ import { RollerCoastersModule } from './roller-coasters/roller-coasters.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { auth } from './lib/auth';
+import { RolesGuard } from './common/guards/roles.guard';
+import { AuthGuard } from './common/guards/auth.guard';
 
 @Module({
   imports: [
@@ -26,6 +28,10 @@ import { auth } from './lib/auth';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: 'APP_GUARD', useClass: AuthGuard },
+    { provide: 'APP_GUARD', useClass: RolesGuard },
+  ],
 })
 export class AppModule {}
