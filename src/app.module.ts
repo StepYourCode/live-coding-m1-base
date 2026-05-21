@@ -7,6 +7,7 @@ import { ParksModule } from './parks/parks.module';
 import { RollerCoastersModule } from './roller-coasters/roller-coasters.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
+import { AuthDocModule } from './auth/auth.module';
 import { auth } from './lib/auth';
 
 @Module({
@@ -16,6 +17,7 @@ import { auth } from './lib/auth';
     ParksModule,
     RollerCoastersModule,
     ReviewsModule,
+    AuthDocModule,
     AuthModule.forRoot({
       auth,
       bodyParser: {
